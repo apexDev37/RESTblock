@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    depends_on:
+      - db
+      - phpMyAdmin
+    ports:
+      - 8080:80
+    networks:
+      - wp-network
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./wp-includes:/var/www/html/wp-includes
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    env_file:
+      - ./configuration/wordpress.env
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    networks:
+      - wp-network
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file:
+      - ./configuration/mysql.env
+
+  phpMyAdmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - wp-network
+    ports:
+      - "80:80"
+    env_file:
+      - ./configuration/phpmyadmin.env
+
+volumes:
+  db_data:
+
+networks:
+  wp-network:
