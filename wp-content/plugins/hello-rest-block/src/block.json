@@ -3,10 +3,10 @@
 	"apiVersion": 2,
 	"name": "create-block/hello-rest-block",
 	"version": "0.1.0",
-	"title": "Hello Rest Block",
+	"title": "RESTful Greetings",
 	"category": "widgets",
 	"icon": "smiley",
-	"description": "Example block scaffolded with Create Block tool.",
+	"description": "Sends and displays a unique and random custom greeting.",
 	"supports": {
 		"html": false
 	},
