@@ -24,3 +24,22 @@ function create_block_hello_rest_block_block_init() {
 	register_block_type( __DIR__ . '/build' );
 }
 add_action( 'init', 'create_block_hello_rest_block_block_init' );
+
+class Hello_REST_Block_OAuth2_Manager {
+	// OAuth properties
+	private $client_id;
+	private $client_secret;
+	private $grant_type;
+	private $redirect_uri;
+
+	public function __construct() {
+		$this->client_id = 'client-id';
+    $this->client_secret = 'client-secret';
+    $this->grant_type = 'grant-type';
+    $this->redirect_uri = 'redirect-uri';
+	}
+
+	public function get_access_token() {
+		// Logic to get access token from auth server
+	}
+}
