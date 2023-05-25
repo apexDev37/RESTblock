@@ -32,6 +32,9 @@ class Hello_REST_Block_OAuth2_Manager {
 	private $grant_type;
 	private $redirect_uri;
 
+	// OAuth endpoints
+	private $auth_code_endpoint;
+
 	public function __construct() {
 		$this->client_id = 'client-id';
     $this->client_secret = 'client-secret';
@@ -40,6 +43,38 @@ class Hello_REST_Block_OAuth2_Manager {
 	}
 
 	public function get_access_token() {
-		// Logic to get access token from auth server
+		// GET authorization code to request access token
+		$auth_code_url = add_query_arg(
+			array (
+				'response_type' => 'code',
+				'client_id' => $this->client_id,
+				'redirect_uri' => $this->redirect_uri,
+			),
+			$this->auth_code_endpoint
+		);
+		
+		$response = wp_remote_get(
+			$auth_code_url,
+			array (
+				'headers' => array (
+					'Content-Type' => 'application/json',	
+				),
+			)
+		);
+
+		if (is_wp_error($response)) {
+			$error_message = $response->get_error_message();
+			return '<span>' . $error_message . '</span>';
+		}
+
+		// Retrieve the redirect URL from the response headers
+		$redirect_uri = wp_remote_retrieve_header($response, 'location');
+		if (strpos($redirect_uri, 'code=') !== false) {
+			$query_params = wp_parse_url($redirect_uri, PHP_URL_QUERY);
+			parse_str($query_params, $query_vars);
+			$auth_code = $query_vars['code'];
+		} else {
+			return '<h2>Authorization code not found in the redirect URL.</h2>';
+		}
 	}
 }
