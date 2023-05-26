@@ -25,8 +25,14 @@ function create_block_hello_rest_block_block_init() {
 }
 add_action( 'init', 'create_block_hello_rest_block_block_init' );
 
-// fix: `undefined` lint warning in code editor for \Dotenv\Dotenv class
-// 			defined in vlucas/phpdotenv package installed in container.
+/**
+ * Loads the .env file provided in the root of the hello-rest-block
+ * and suppresses any warnings if a .env file is not present.
+ * 
+ * @package	vlucas/phpdotenv
+ * @see	https://github.com/vlucas/phpdotenv
+ */
+require_once __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
@@ -41,10 +47,10 @@ class Hello_REST_Block_OAuth2_Manager {
 	private $auth_code_endpoint;
 
 	public function __construct() {
-		$this->client_id = $_ENV['client_id'];
-    $this->client_secret = $_ENV['client_secret'];
-    $this->grant_type = $_ENV['grant-type'];
-    $this->redirect_uri = $_ENV['redirect-uri'];
+		$this->client_id = $_ENV['CLIENT_ID'];
+    $this->client_secret = $_ENV['CLIENT_SECRET'];
+    $this->grant_type = $_ENV['GRANT_TYPE'];
+    $this->redirect_uri = $_ENV['REDIRECT_URI'];
 	}
 
 	public function get_access_token() {
