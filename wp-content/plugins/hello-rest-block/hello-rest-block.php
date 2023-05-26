@@ -25,6 +25,11 @@ function create_block_hello_rest_block_block_init() {
 }
 add_action( 'init', 'create_block_hello_rest_block_block_init' );
 
+// fix: `undefined` lint warning in code editor for \Dotenv\Dotenv class
+// 			defined in vlucas/phpdotenv package installed in container.
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
 class Hello_REST_Block_OAuth2_Manager {
 	// OAuth properties
 	private $client_id;
@@ -36,10 +41,10 @@ class Hello_REST_Block_OAuth2_Manager {
 	private $auth_code_endpoint;
 
 	public function __construct() {
-		$this->client_id = 'client-id';
-    $this->client_secret = 'client-secret';
-    $this->grant_type = 'grant-type';
-    $this->redirect_uri = 'redirect-uri';
+		$this->client_id = $_ENV['client_id'];
+    $this->client_secret = $_ENV['client_secret'];
+    $this->grant_type = $_ENV['grant-type'];
+    $this->redirect_uri = $_ENV['redirect-uri'];
 	}
 
 	public function get_access_token() {
@@ -79,6 +84,3 @@ class Hello_REST_Block_OAuth2_Manager {
 		}
 	}	
 }
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
