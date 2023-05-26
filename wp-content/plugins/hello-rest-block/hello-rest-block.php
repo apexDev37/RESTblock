@@ -73,8 +73,12 @@ class Hello_REST_Block_OAuth2_Manager {
 			$query_params = wp_parse_url($redirect_uri, PHP_URL_QUERY);
 			parse_str($query_params, $query_vars);
 			$auth_code = $query_vars['code'];
+			return '<span>' . $auth_code . '</span>';
 		} else {
 			return '<h2>Authorization code not found in the redirect URL.</h2>';
 		}
-	}
+	}	
 }
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
