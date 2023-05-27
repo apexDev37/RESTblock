@@ -51,42 +51,37 @@ class Hello_REST_Block_OAuth2_Manager {
     $this->client_secret = $_ENV['CLIENT_SECRET'];
     $this->grant_type = $_ENV['GRANT_TYPE'];
     $this->redirect_uri = $_ENV['REDIRECT_URI'];
+
+		$this->auth_code_endpoint = $_ENV['AUTHORIZATION_CODE_ENDPOINT'];
 	}
 
 	public function get_access_token() {
 		// GET authorization code to request access token
 		$auth_code_url = add_query_arg(
 			array (
-				'response_type' => 'code',
+				'response_type' => $this->grant_type,
 				'client_id' => $this->client_id,
 				'redirect_uri' => $this->redirect_uri,
 			),
 			$this->auth_code_endpoint
 		);
-		
-		$response = wp_remote_get(
-			$auth_code_url,
-			array (
-				'headers' => array (
-					'Content-Type' => 'application/json',	
-				),
-			)
-		);
 
-		if (is_wp_error($response)) {
-			$error_message = $response->get_error_message();
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_URL, $auth_code_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_PROXY, $_ENV['AUTHORIZATION_CODE_ENDPOINT']);
+		
+		$response = curl_exec($ch);
+    if (curl_errno($ch)) {
+			$error_message = curl_error($ch);
+			curl_close($ch);
 			return '<span>' . $error_message . '</span>';
 		}
 
-		// Retrieve the redirect URL from the response headers
-		$redirect_uri = wp_remote_retrieve_header($response, 'location');
-		if (strpos($redirect_uri, 'code=') !== false) {
-			$query_params = wp_parse_url($redirect_uri, PHP_URL_QUERY);
-			parse_str($query_params, $query_vars);
-			$auth_code = $query_vars['code'];
-			return '<span>' . $auth_code . '</span>';
-		} else {
-			return '<h2>Authorization code not found in the redirect URL.</h2>';
-		}
+		curl_close($ch);
+
+		$redirect_uri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+		return '<span>' . 'Redirect uri: ' . $redirect_uri . '</span>';
 	}	
 }
