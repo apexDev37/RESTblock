@@ -58,30 +58,28 @@ class Hello_REST_Block_OAuth2_Manager {
 	public function get_access_token() {
 		// GET authorization code to request access token
 		$auth_code_url = add_query_arg(
-			array (
-				'response_type' => $this->grant_type,
-				'client_id' => $this->client_id,
-				'redirect_uri' => $this->redirect_uri,
+			array(
+					'response_type' => $this->grant_type,
+					'client_id' => $this->client_id,
+					'redirect_uri' => $this->redirect_uri,
 			),
-			$this->auth_code_endpoint
+			$this->auth_code_endpoint . '/oauth/authorize'
 		);
 
 		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL, $auth_code_url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_PROXY, $_ENV['AUTHORIZATION_CODE_ENDPOINT']);
-		
+    curl_setopt($ch, CURLOPT_URL, $auth_code_url);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    // curl_setopt($ch, CURLOPT_PROXY, $this->auth_code_endpoint); // Disable automatic redirects
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'); // Set the user agent from the HTTP request headers
+
 		$response = curl_exec($ch);
-    if (curl_errno($ch)) {
-			$error_message = curl_error($ch);
-			curl_close($ch);
-			return '<span>' . $error_message . '</span>';
-		}
+		$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$headers = curl_getinfo($ch);
 
-		curl_close($ch);
-
-		$redirect_uri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-		return '<span>' . 'Redirect uri: ' . $redirect_uri . '</span>';
-	}	
+		return '<h2>' . print_r($headers, true) .  '</h2>';
+	}
 }
