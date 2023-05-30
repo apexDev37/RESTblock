@@ -69,17 +69,43 @@ class Hello_REST_Block_OAuth2_Manager {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $auth_code_url);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-    // curl_setopt($ch, CURLOPT_PROXY, $this->auth_code_endpoint); // Disable automatic redirects
+		// curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
+    // curl_setopt($ch, CURLOPT_PROXY, $this->auth_code_endpoint); 
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'); // Set the user agent from the HTTP request headers
 
 		$response = curl_exec($ch);
 		$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$headers = curl_getinfo($ch);
 
-		return '<h2>' . print_r($headers, true) .  '</h2>';
+		return '<pre>' . print_r($headers, true) .  '</pre>';
+	}
+}
+
+class Hello_REST_Block_REST_Client {
+	private $base_url;
+	private $endpoint;
+
+	public function __construct() {
+		$this->base_url = 'base-url';
+		$this->endpoint = 'rest-greeting-endpoint';
+	}
+
+	public function send_custom_greeting() {
+		$url = $this->base_url . $this->endpoint;
+		$args = array(
+			'timeout' => 10,
+			'method' => 'GET',
+			'body' => array(
+					'greeting' => 'hello'
+			),
+			'sslverify' => false
+		);	
+
+		// Handle response 
+		// ...
 	}
 }
