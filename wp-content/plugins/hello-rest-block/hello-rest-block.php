@@ -44,6 +44,7 @@ class Hello_REST_Block_OAuth2_Manager {
 	private $redirect_uri;
 
 	// OAuth endpoints
+	private $base_url;
 	private $auth_code_endpoint;
 
 	public function __construct() {
@@ -52,6 +53,7 @@ class Hello_REST_Block_OAuth2_Manager {
     $this->grant_type = $_ENV['GRANT_TYPE'];
     $this->redirect_uri = $_ENV['REDIRECT_URI'];
 
+		$this->base_url = $_ENV['BASE_URL'];
 		$this->auth_code_endpoint = $_ENV['AUTHORIZATION_CODE_ENDPOINT'];
 	}
 
@@ -63,7 +65,7 @@ class Hello_REST_Block_OAuth2_Manager {
 					'client_id' => $this->client_id,
 					'redirect_uri' => $this->redirect_uri,
 			),
-			$this->auth_code_endpoint . '/oauth/authorize'
+			$this->base_url . $this->auth_code_endpoint
 		);
 
 		$ch = curl_init();
@@ -90,8 +92,8 @@ class Hello_REST_Block_REST_Client {
 	private $endpoint;
 
 	public function __construct() {
-		$this->base_url = 'base-url';
-		$this->endpoint = 'rest-greeting-endpoint';
+		$this->base_url = $_ENV['BASE_URL'];
+		$this->endpoint = $_ENV['WP_REST_ENDPOINT'];
 	}
 
 	public function send_custom_greeting() {
@@ -103,10 +105,12 @@ class Hello_REST_Block_REST_Client {
 		);	
 
 		$params = array('greeting' => 'Hello world!');
-		$url = add_query_arg($params, $url);		
-		$response = wp_remote_request($url, $args);
+		$final_url = add_query_arg($params, $url);		
+		$response = wp_remote_request($final_url, $args);
 
 		// Handle response 
 		// ...
+
+		return '<pre>' . $response .  '</pre>';
 	}
 }
