@@ -104,13 +104,25 @@ class Hello_REST_Block_REST_Client {
 			'sslverify' => false
 		);	
 
-		$params = array('greeting' => 'Hello world!');
-		$final_url = add_query_arg($params, $url);		
+		$params = array('greeting' => 'hello-from-wp-client');
+		$final_url = add_query_arg($params, $url);
 		$response = wp_remote_request($final_url, $args);
 
 		// Handle response 
 		// ...
 
-		return '<pre>' . $response .  '</pre>';
+		if (is_wp_error($response)) {
+			$error_message = $response->get_error_message();
+			return '<span>' . $error_message .  '</span>';
+		}
+		
+		$response_code = wp_remote_retrieve_response_code($response);
+		if ($response_code !== 200) {
+			$custom_error_message = 'Oops, couldn\'t send our friend a greeting :(';
+			return '<span>' . $custom_error_message .  '</span>';
+		}
+
+		$custom_greeting = wp_remote_retrieve_body($response);
+		return '<span>' . $custom_greeting .  '</span>';
 	}
 }
