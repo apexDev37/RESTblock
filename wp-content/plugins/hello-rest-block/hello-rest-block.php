@@ -99,11 +99,12 @@ class Hello_REST_Block_REST_Client {
 		$args = array(
 			'timeout' => 10,
 			'method' => 'GET',
-			'body' => array(
-					'greeting' => 'hello'
-			),
 			'sslverify' => false
 		);	
+
+		$params = array('greeting' => 'Hello world!');
+		$url = add_query_arg($params, $url);		
+		$response = wp_remote_request($url, $args);
 
 		// Handle response 
 		// ...
