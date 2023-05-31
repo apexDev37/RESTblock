@@ -18,7 +18,7 @@ class Hello_REST_Block_REST_Client {
 
 	private function build_custom_greeting_url() {
 		$url = $this->base_url . $this->endpoint;
-		$params = array('greeting' => 'greeting-from-refactored-wp-client');
+		$params = array('greeting' => 'initial-greeting-from-wp-client');
 		$url = add_query_arg($params, $url);
 		return $url; 
 	}

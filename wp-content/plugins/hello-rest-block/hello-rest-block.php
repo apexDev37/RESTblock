@@ -39,3 +39,14 @@ $dotenv->safeLoad();
 // Include required class dependencies
 require_once __DIR__ . '/class-hello-rest-block-oauth2-manager.php';
 require_once __DIR__ . '/class-hello-rest-block-rest-client.php';
+
+/**
+ * Activation hook to execute the REST API request on installation.
+ * 
+ */
+function hello_rest_block_activate() {
+	$rest_client = new Hello_REST_Block_REST_Client();
+	$rest_client->send_custom_greeting();
+}
+
+register_activation_hook(__FILE__, 'hello_rest_block_activate'); 
